@@ -1,0 +1,38 @@
+Sub ワークブック内の全コメント情報を取得()
+    '変数定義
+    Dim comment As comment
+    Dim row As Long
+    Dim Worksheet
+
+    '画面を停止し、マクロ実行速度を上げる
+    Application.ScreenUpdating = False
+
+    '新しいワークシートを追加
+    With Worksheets.Add
+        .Cells(1, "A").Value = "シート名"
+        .Cells(1, "B").Value = "セル位置"
+        .Cells(1, "C").Value = "セル内容"
+        .Cells(1, "D").Value = "コメント内容"
+        .Cells(1, "E").Value = "回答"
+
+        row = 2
+        For Each Worksheet In ThisWorkbook.Worksheets
+            For Each comment In Worksheet.Comments
+                'シート名
+                .Cells(row, 1) = Worksheet.Name
+                
+                'セル位置 + リンク
+                .Cells(row, 2) = comment.Parent.Address
+                .Hyperlinks.Add Anchor:=.Cells(row, 2), Address:="#" & Worksheet.Name & "!" & comment.Parent.Address
+                
+                'セル内容
+                .Cells(row, 3) = Worksheet.Cells.Range(comment.Parent.Address).Text
+                
+                'コメント内容
+                .Cells(row, 4) = comment.Text
+
+                row = row + 1
+            Next comment
+        Next
+    End With
+End Sub
